@@ -14,6 +14,10 @@ classifiers = [
   "Topic :: Software Development :: Quality Assurance",
 ]
 
+[project.urls]
+Homepage = "https://github.com/lowest-digital/strings-lint"
+Issues = "https://github.com/lowest-digital/strings-lint/issues"
+
 [project.scripts]
 strings-lint = "strings_lint.cli:main"
 

@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: ${{ matrix.python }}
+      - run: uv run --python ${{ matrix.python }} pytest -q
+      - name: Lint the fixture app with itself (must find the planted errors)
+        run: |
+          set +e
+          uv run strings-lint tests/fixtures/app --format github
+          test $? -eq 1

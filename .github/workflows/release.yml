@@ -1,0 +1,31 @@
+# Publishes to PyPI when a tag like v0.1.0 is pushed. Uses PyPI Trusted Publishing (OIDC): no API token is stored.
+# One-time setup on PyPI: add a (pending) publisher for this repository, workflow "release.yml", environment "pypi".
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv run pytest -q
+      - name: Tag must match the version in pyproject.toml
+        run: test "v$(uv version --short)" = "${GITHUB_REF_NAME}"
+      - run: uv build
+      - uses: actions/upload-artifact@v4
+        with: { name: dist, path: dist/ }
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: dist, path: dist/ }
+      - uses: pypa/gh-action-pypi-publish@release/v1

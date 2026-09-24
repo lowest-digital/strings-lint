@@ -18,6 +18,30 @@ def _entry(loc: dict) -> Entry | None:
     return None
 
 
+def _entries(key: str, loc: dict) -> dict[str, Entry] | None:
+    """One localization → entries: plain/plural under `key`, device variants as `key [iphone]`,
+    substitutions as main text `key` plus plural `key [name]`. None for unknown structures."""
+    variations = loc.get("variations", {})
+    if "substitutions" in loc:
+        main = _entry({k: v for k, v in loc.items() if k != "substitutions"})
+        if main is None:
+            return None
+        out = {key: main}
+        for name, sub in loc["substitutions"].items():
+            if (e := _entry(sub)) is None or e.plural is None:
+                return None
+            out[f"{key} [{name}]"] = e
+        return out
+    if "device" in variations:
+        out = {}
+        for device, node in variations["device"].items():
+            if (e := _entry(node)) is None:
+                return None
+            out[f"{key} [{device}]"] = e
+        return out
+    return {key: e} if (e := _entry(loc)) is not None else None
+
+
 def discover(files: list[Path], source: str | None) -> list[Catalog]:
     catalogs = []
     for path in files:
@@ -30,16 +54,16 @@ def discover(files: list[Path], source: str | None) -> list[Catalog]:
             if not key or item.get("shouldTranslate") is False:
                 continue
             locs = item.get("localizations", {})
-            entry = _entry(locs[src]) if src in locs else Entry(text=key)
-            if entry is None:
-                cat.notes.append(f"{path.name}: '{key}' uses device variations or substitutions, skipped")
+            entries = _entries(key, locs[src]) if src in locs else {key: Entry(text=key)}
+            if entries is None:
+                cat.notes.append(f"{path.name}: '{key}' uses nested variations, skipped")
                 continue
-            cat.source[key] = entry
+            cat.source.update(entries)
             for lang, loc in locs.items():
                 if lang == src:
                     continue
                 cat.files.setdefault(lang, str(path))
-                if (e := _entry(loc)) is not None:
-                    cat.targets.setdefault(lang, {})[key] = e
+                if (t := _entries(key, loc)) is not None:
+                    cat.targets.setdefault(lang, {}).update(t)
         catalogs.append(cat)
     return catalogs

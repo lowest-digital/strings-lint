@@ -65,7 +65,14 @@ def read(path: Path) -> tuple[dict[str, Entry], list[str], list[str]]:
                     apostrophes.append(name)
             entries[name] = Entry(plural=forms, explicit=("zero",) if "zero" in forms else ())
         elif el.tag == "string-array":
-            notes.append(f"{path.name}: <string-array name='{name}'> skipped")
+            for n, item in enumerate(el.findall("item")):
+                raw = _inner(item)
+                text = unescape(raw)
+                if text.startswith(("@string/", "@android:string/")):
+                    continue  # reference, nothing to translate
+                entries[f"{name}[{n}]"] = Entry(text=text)
+                if unescaped_apostrophe(raw):
+                    apostrophes.append(f"{name}[{n}]")
     return entries, apostrophes, notes
 
 

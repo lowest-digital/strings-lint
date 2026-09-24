@@ -29,6 +29,14 @@ EXPECTED = {
     ("length", "error", "de-DE", "subtitle.txt"),
     ("subtitle", "warning", "de-DE", "subtitle.txt"),
     ("length", "error", "ja", "keywords.txt"),
+    ("missing", "warning", "de", "tap_to_continue [mac]"),
+    ("placeholder", "error", "de", "%#@days@ and %#@hours@ left [hours]"),
+    ("placeholder", "warning", "de", "%#@days@ and %#@hours@ left [hours]"),
+    ("missing", "warning", "pt-BR", "pages[2]"),
+    ("missing", "warning", "fr", "pages[0]"),
+    ("missing", "warning", "fr", "pages[2]"),
+    ("missing", "warning", "zh-Hans", "pages[0]"),
+    ("missing", "warning", "zh-Hans", "pages[2]"),
 }
 
 

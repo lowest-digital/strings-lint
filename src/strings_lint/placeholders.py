@@ -9,7 +9,8 @@ from collections import Counter
 PRINTF = r"%(?:\d+\$)?[-+0#]*(?:\d+|\*)?(?:\.\d+)?(?:hh|h|ll|l|q|z|t|j|L)?[@dDiuUxXoOfFeEgGcCsSaAp]"
 PATTERN = re.compile("|".join([
     r"%%",
-    r"%#@\w+@",                        # stringsdict variables
+    r"%#@\w+@",                        # stringsdict / xcstrings substitution variables
+    r"%arg(?![A-Za-z0-9_])",                          # argument inside an xcstrings substitution
     PRINTF,
     r"\{\{\s*[\w.-]+\s*\}\}",          # i18next, Handlebars
     r"\{[\w.-]+\}",                    # {name}, {0}
@@ -22,12 +23,18 @@ def find(text: str) -> list[str]:
 
 
 def _unpositioned(token: str) -> bool:
-    return token.startswith("%") and token != "%%" and not token.startswith("%#@") and not re.match(r"%\d+\$", token)
+    return (token.startswith("%") and token not in ("%%", "%arg") and not token.startswith("%#@")
+            and not re.match(r"%\d+\$", token))
+
+
+def _argument(token: str) -> bool:
+    """A printf argument (positioned or not); not %%, %arg or %#@var@."""
+    return _unpositioned(token) or bool(re.match(r"%\d+\$", token))
 
 
 def positioned(text: str) -> str:
     """`%@ … %lld of %lld` → `%1$@ … %2$lld of %3$lld` when there are at least two unpositioned printf arguments."""
-    tokens = [t for t in find(text) if t.startswith("%") and t != "%%" and not t.startswith("%#@")]
+    tokens = [t for t in find(text) if _argument(t)]
     if sum(map(_unpositioned, tokens)) < 2 or any(not _unpositioned(t) for t in tokens):
         return text
     n = 0
@@ -49,28 +56,40 @@ def _positional(tokens: list[str]) -> bool:
 def _comparable(text: str, number: bool) -> list[str]:
     """Tokens for comparison; with `number` the unpositioned printf arguments are numbered first."""
     tokens = find(positioned(text) if number else text)
-    printf = [t for t in tokens if t.startswith("%") and t != "%%" and not t.startswith("%#@")]
+    printf = [t for t in tokens if _argument(t)]
     if len(printf) == 1:
         tokens = [re.sub(r"^%1\$", "%", t) for t in tokens]
     return tokens
 
 
-def compare(source: str, target: str) -> list[str]:
-    """Human-readable problems; empty list means placeholders match."""
+def differences(source: str, target: str) -> list[tuple[str, list[str], list[str]]]:
+    """Structured result for tools that word the problems themselves:
+    ("order", target_order, source_order) or ("missing"/"extra", tokens, [])."""
     q_raw, z_raw = find(source), find(target)
     qp = [x for x in q_raw if _unpositioned(x)]
     zp = [x for x in z_raw if _unpositioned(x)]
     if len(set(qp)) > 1 and Counter(qp) == Counter(zp) and qp != zp:
-        return [f"order {' '.join(zp)} instead of {' '.join(qp)}; use positional specifiers (%1$@) to reorder"]
+        return [("order", zp, qp)]
     # Number the arguments only when one side uses positions, so a plain "%@ … %ld" vs "%@" reports "missing %ld".
     number = _positional(q_raw) != _positional(z_raw)
     q, z = Counter(_comparable(source, number)), Counter(_comparable(target, number))
-    problems = []
+    out = []
     if missing := q - z:
-        problems.append("missing " + " ".join(missing.elements()))
+        out.append(("missing", list(missing.elements()), []))
     if extra := z - q:
-        problems.append("extra " + " ".join(extra.elements()))
-    return problems
+        out.append(("extra", list(extra.elements()), []))
+    return out
+
+
+def compare(source: str, target: str) -> list[str]:
+    """Human-readable problems; empty list means placeholders match."""
+    out = []
+    for kind, a, b in differences(source, target):
+        if kind == "order":
+            out.append(f"order {' '.join(a)} instead of {' '.join(b)}; use positional specifiers (%1$@) to reorder")
+        else:
+            out.append(f"{kind} {' '.join(a)}")
+    return out
 
 
 def ambiguous_repeats(source: str) -> bool:

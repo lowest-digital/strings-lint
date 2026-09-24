@@ -18,6 +18,9 @@ It reads your files as they are. Nothing is uploaded, nothing is changed.
 $ strings-lint ios android fastlane/metadata/ja
 ios/Localizable.xcstrings
   warning en       positional         Hello, %@! You completed %lld of %lld habits today.: repeated unpositioned arguments; use %1$lld … %2$lld so translations can reorder them
+  warning de       missing            tap_to_continue [mac]: not translated
+  warning de       placeholder        %#@days@ and %#@hours@ left [hours]: [one] missing %arg
+  error   de       placeholder        %#@days@ and %#@hours@ left [hours]: [other] missing %arg
   error   pl       plural             %lld days left: missing plural forms: few, many (needs one, few, many, other)
   error   pl       empty              Save: empty translation
   error   ja       placeholder        Hello, %@! You completed %lld of %lld habits today.: order %lld %@ %lld instead of %@ %lld %lld; use positional specifiers (%1$@) to reorder
@@ -28,11 +31,17 @@ ios/Legacy/de.lproj/Localizable.stringsdict
   warning de       plural             streak: source has a special text for zero, translation does not
 android/app/src/main/res/values-fr/strings.xml
   error   fr       android-apostrophe greeting: unescaped ' breaks the build: write \' or wrap the text in double quotes
+  warning fr       missing            pages[0]: not translated
+  warning fr       missing            pages[2]: not translated
 android/app/src/main/res/values-pt-rBR/strings.xml
   error   pt-BR    plural             habits_done: missing plural forms: many (needs one, many, other)
+  warning pt-BR    missing            pages[2]: not translated
+android/app/src/main/res/values-b+zh+Hans/strings.xml
+  warning zh-Hans  missing            pages[0]: not translated
+  warning zh-Hans  missing            pages[2]: not translated
 fastlane/metadata/ja/keywords.txt
   error   ja       length             keywords.txt: 133 bytes, limit 100
-4 catalog(s) checked: 7 error(s), 3 warning(s)
+4 catalog(s) checked: 8 error(s), 10 warning(s)
 ```
 
 ## Install
@@ -50,9 +59,9 @@ Requires Python 3.10+. The only dependency is [Babel](https://babel.pocoo.org/) 
 
 | Format | Source | Translations |
 | --- | --- | --- |
-| Xcode String Catalog | `*.xcstrings` (`sourceLanguage`) | localizations in the same file |
+| Xcode String Catalog | `*.xcstrings` (`sourceLanguage`), device variants as `key [mac]`, substitutions as `key [days]` | localizations in the same file |
 | iOS `.strings` / `.stringsdict` | `en.lproj/`, `Base.lproj/` | `<locale>.lproj/` |
-| Android resources | `res/values/*.xml` | `res/values-<qualifier>/` (`values-pt-rBR`, `values-b+zh+Hans`) |
+| Android resources | `res/values/*.xml`, `<string-array>` items as `name[0]` | `res/values-<qualifier>/` (`values-pt-rBR`, `values-b+zh+Hans`) |
 | Flutter ARB | `app_en.arb` (`@@locale`) | `app_<locale>.arb`, ICU plurals incl. `=0` |
 | i18next JSON | `locales/en/*.json` or `locales/en.json` | sibling locale folders or files, `_one`/`_other` |
 | CSV | column `en` next to `key` | one column per locale |
@@ -101,8 +110,8 @@ description 80, full description 4,000, release notes 500 (Play Console form).
 
 ## Not supported yet
 
-Device variations and substitutions in `.xcstrings`, `.stringsdict` entries with several variables, ICU `select`,
-Android `<string-array>`, XLIFF and gettext. They are reported as notes and skipped.
+`.stringsdict` entries with several variables, nested variations in `.xcstrings` (plural inside a device
+variant is fine, device inside plural is not), ICU `select`, XLIFF and gettext. They are reported as notes and skipped.
 
 ## Why this exists
 

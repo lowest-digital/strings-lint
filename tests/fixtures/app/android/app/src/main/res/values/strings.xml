@@ -6,4 +6,9 @@
         <item quantity="one">%d habit done</item>
         <item quantity="other">%d habits done</item>
     </plurals>
+    <string-array name="pages">
+        <item>Welcome</item>
+        <item>@string/app_name</item>
+        <item>Let\'s go</item>
+    </string-array>
 </resources>

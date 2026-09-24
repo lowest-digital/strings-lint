@@ -5,4 +5,8 @@
         <item quantity="one">%d hábito concluído</item>
         <item quantity="other">%d hábitos concluídos</item>
     </plurals>
+    <string-array name="pages">
+        <item>Bem-vindo</item>
+        <item>@string/app_name</item>
+    </string-array>
 </resources>

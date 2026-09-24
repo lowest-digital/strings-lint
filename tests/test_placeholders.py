@@ -29,3 +29,15 @@ def test_plural_categories():
     assert categories("zh-Hans") == ["other"]
     assert categories("key") is None
     assert one_is_exactly_one("de") and not one_is_exactly_one("ru")
+
+
+def test_substitution_tokens_and_differences():
+    assert p.find("%#@days@ and %arg hours") == ["%#@days@", "%arg"]
+    assert p.positioned("%#@days@ of %lld and %lld") == "%#@days@ of %1$lld and %2$lld"
+    assert p.differences("%arg days", "Tage") == [("missing", ["%arg"], [])]
+    assert p.differences("%@ sent %d", "%d von %@") == [("order", ["%d", "%@"], ["%@", "%d"])]
+
+
+def test_arg_before_cjk():
+    # \b fails before 日 (a Unicode word character); %arg must still be one token
+    assert p.find("%arg日") == ["%arg"] and p.compare("%arg days", "%arg日") == []

@@ -1,0 +1,5 @@
+{
+  "@@locale": "ru",
+  "habitsLeft": "{count, plural, =0{Всё готово!} one{Осталась одна привычка} few{Осталось {count} привычки} many{Осталось {count} привычек} other{Осталось {count} привычки}}",
+  "hello": "Привет, {name}"
+}

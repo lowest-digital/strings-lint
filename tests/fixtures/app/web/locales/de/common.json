@@ -1,0 +1,9 @@
+{
+  "nav": {
+    "home": "Start"
+  },
+  "items_one": "{{count}} Gewohnheit",
+  "items_other": "{{count}} Gewohnheiten",
+  "welcome": "Willkommen zurück!",
+  "legacy": "Alt"
+}

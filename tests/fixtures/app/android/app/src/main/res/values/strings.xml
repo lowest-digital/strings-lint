@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Habitly</string>
+    <string name="greeting">Hello, %1$s! Ready for today\'s habits?</string>
+    <plurals name="habits_done">
+        <item quantity="one">%d habit done</item>
+        <item quantity="other">%d habits done</item>
+    </plurals>
+</resources>

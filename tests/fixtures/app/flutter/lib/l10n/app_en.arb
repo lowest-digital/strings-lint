@@ -1,0 +1,5 @@
+{
+  "@@locale": "en",
+  "habitsLeft": "{count, plural, =0{All done!} one{{count} habit left} other{{count} habits left}}",
+  "hello": "Hello {name}"
+}

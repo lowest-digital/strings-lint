@@ -1,0 +1,8 @@
+{
+  "nav": {
+    "home": "Home"
+  },
+  "items_one": "{{count}} habit",
+  "items_other": "{{count}} habits",
+  "welcome": "Welcome back, {{name}}!"
+}

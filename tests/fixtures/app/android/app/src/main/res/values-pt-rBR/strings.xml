@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="greeting">Olá, %1$s! Pronto para os hábitos de hoje?</string>
+    <plurals name="habits_done">
+        <item quantity="one">%d hábito concluído</item>
+        <item quantity="other">%d hábitos concluídos</item>
+    </plurals>
+</resources>

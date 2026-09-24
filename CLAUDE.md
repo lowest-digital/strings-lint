@@ -9,7 +9,13 @@
 - Store-Grenzen stehen nur in src/strings_lint/fastlane.py, mit Quelle. Sie müssen mit
   lowest.localizationpipeline/src/l10n/store.py übereinstimmen.
 - Platzhalter- und Pluralregeln stammen aus lowest.localizationpipeline; Fehler dort und hier gemeinsam beheben.
-- Veröffentlichen (GitHub, PyPI) erst nach Freigabe durch den Nutzer, unter pseudonymem Konto.
+- Öffentlich: github.com/lowest-digital/strings-lint (Remote `github`), PyPI `strings-lint` (Konto lowest.digital).
+  Gitea `origin` (lowest/strings-lint) ist die private Spiegelung; immer beide pushen.
+- Pushen nach GitHub nur mit dem persönlichen Konto Sandreas1789: dafür steht in .git/config ein
+  Credential-Helper für github.com, der `gh auth token --user Sandreas1789` nutzt. Nie mit a-struck_pollrich.
+- Commits als `lowest.digital <noreply@lowest.digital>` (lokale Git-Konfiguration), nie Klarname oder Firmenadresse.
+- Release: Version in pyproject.toml und __init__.py erhöhen, committen, `git tag -a vX.Y.Z`, Tag nach github
+  pushen. Der Workflow veröffentlicht per Trusted Publishing. Neue Releases nur nach Freigabe durch den Nutzer.
 
 ## Arbeitsweise
 

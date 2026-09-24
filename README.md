@@ -1,5 +1,7 @@
 # strings-lint
 
+[![PyPI](https://img.shields.io/pypi/v/strings-lint)](https://pypi.org/project/strings-lint/) [![CI](https://github.com/lowest-digital/strings-lint/actions/workflows/ci.yml/badge.svg)](https://github.com/lowest-digital/strings-lint/actions/workflows/ci.yml)
+
 Lint the translations already in your app repo. strings-lint compares every language with its source and
 finds the mistakes that compile fine and then show up on a user's screen:
 
@@ -35,12 +37,12 @@ fastlane/metadata/ja/keywords.txt
 
 ## Install
 
-Not on PyPI yet. Until the first release, install from a checkout:
-
 ```bash
-pipx install .                 # or: uv tool install .
+pipx install strings-lint      # or: uv tool install strings-lint
 strings-lint path/to/your/app
 ```
+
+Or run it once without installing: `uvx strings-lint` / `pipx run strings-lint`.
 
 Requires Python 3.10+. The only dependency is [Babel](https://babel.pocoo.org/) for CLDR plural rules.
 
@@ -77,7 +79,7 @@ Exit code 1 if there is any error (or any warning with `--strict`).
 ```yaml
 - uses: actions/setup-python@v5
   with: { python-version: "3.12" }
-- run: pipx run strings-lint --format github --ignore missing   # once published on PyPI
+- run: pipx run strings-lint --format github --ignore missing
 ```
 
 ## Rules

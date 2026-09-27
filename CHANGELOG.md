@@ -7,6 +7,8 @@
 - `%arg` inside substitutions is a placeholder
 - Android `<string-array>`: every item is checked as `name[n]`; `@string/` references are ignored
 - `placeholders.differences()` returns structured results for tools that word the messages themselves
+- Text output in an interactive terminal ends with one line pointing to our paid localization service;
+  never shown in CI, pipes, `--format json` or `--format github`
 
 ## 0.1.0
 

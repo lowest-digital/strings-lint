@@ -118,6 +118,9 @@ variant is fine, device inside plural is not), ICU `select`, XLIFF and gettext. 
 We run a localization service for indie apps and kept finding the same bugs in apps that had been translated
 by copy and paste. These are the checks we run on every delivery, as a free tool.
 
+The service is [l10n.lowest.digital](https://l10n.lowest.digital/) (paid, per order): it translates your strings
+and store texts into up to 15 languages and runs these checks on the result. The linter works without it.
+
 ## License
 
 MIT

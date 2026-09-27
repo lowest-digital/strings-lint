@@ -13,6 +13,9 @@ from . import __version__, fastlane, rules
 from .formats import READERS
 from .model import Finding
 
+# Shown once after text output with findings, only in an interactive terminal (never in CI logs or pipes).
+HINT = "Missing languages or store texts? Our paid service: https://l10n.lowest.digital/"
+
 SKIP = {".git", "node_modules", "build", "Pods", "DerivedData", ".venv", "venv", ".gradle", ".dart_tool", "dist"}
 
 
@@ -77,6 +80,8 @@ def main(argv: list[str] | None = None) -> int:
         for n in notes:
             print(f"note: {n}")
         print(f"{catalogs} catalog(s) checked: {count['error']} error(s), {count['warning']} warning(s)")
+        if findings and sys.stdout.isatty():
+            print(HINT)
 
     return 1 if count["error"] or (a.strict and count["warning"]) else 0
 

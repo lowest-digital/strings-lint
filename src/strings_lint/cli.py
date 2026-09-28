@@ -14,7 +14,7 @@ from .formats import READERS
 from .model import Finding
 
 # Shown once after text output with findings, only in an interactive terminal (never in CI logs or pipes).
-HINT = "Missing languages or store texts? Our paid service: https://l10n.lowest.digital/"
+HINT = "Missing languages or store texts? See the price of our paid service: https://l10n.lowest.digital/count/"
 
 SKIP = {".git", "node_modules", "build", "Pods", "DerivedData", ".venv", "venv", ".gradle", ".dart_tool", "dist"}
 
